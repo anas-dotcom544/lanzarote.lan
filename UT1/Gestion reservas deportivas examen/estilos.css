@@ -1,0 +1,22 @@
+body {
+    margin-left: 15px;
+}
+
+h1 {
+    text-align: center;
+    color: chocolate;
+}
+
+h2 {
+    color:darkseagreen;
+}
+
+table{
+    padding: 5px;
+    margin: 5px;
+}
+
+p {
+    margin-left: 5px;
+}
+

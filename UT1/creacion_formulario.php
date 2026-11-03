@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+ 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@6.0.0-alpha.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-B/GM4XqrwHnWXNOWMbloTmrYXZg10cakYGmpfsR/bbzQ6JAJI4ihuyADKLnBgrCe" crossorigin="anonymous">
+    <scrit type="module" src="https://cdn.jsdelivr.net/npm/bootstrap@6.0.0-alpha.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-1a/pXj49ZQ1aHEmrJ+gMw1otqoVsYwlEnlD8mIfY2TV03r20Y0CN7uqx1tQogjPL" crossorigin="anonymous"></script>
+
+    <style type="text/css"> 
+        html, body {
+            background: #9bb3b9;
+            height: 100%;
+        }
+
+        .container {
+            background: #14d3ec;
+            height: 100%;
+            display: block;
+        }
+    </style>
+    
+</head>
+<body>
+
+<div class="container">
+    <form action="procesar.php" method="POST">
+        <label>Nombre: <input type="text" name="nombre"></label><br>
+
+        <label>Edad: <input type="number" name="edad"></label><br>
+
+        <label>Email: <input type="email" name="email"></label><br>
+
+        <button class="btn-solid theme-primary" type="submit">Enviar</button>
+    </form>
+</div>
+    
+</body>
+</html>
