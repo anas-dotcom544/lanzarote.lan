@@ -1,13 +1,1 @@
 RewriteEngine On
-
-# 1 Redirecciones concretas, directas a la URL final
-RewriteRule ^antigua-pagina$ https://ejemplo.com/nueva-pagina [R=301,L]
-
-# 2 HTTPS y sin www en un solo salto
-RewriteCond %{HTTPS} !=on [OR]
-RewriteCond %{HTTP_HOST} ^www\. [NC]
-RewriteCond %{HTTP_HOST} ^(?:www\.)?(.+)$ [NC]
-RewriteRule ^ https://%1%{REQUEST_URI} [L,R=301]
-
-# 3 Reescrituras internas
-RewriteRule ^producto/([0-9]+)/?$ producto.php?id=$1 [L,QSA]
