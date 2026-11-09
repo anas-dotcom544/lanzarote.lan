@@ -161,7 +161,3 @@ class Template{
 
 
 }
-
-
-
-
