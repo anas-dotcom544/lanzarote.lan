@@ -1,163 +1,97 @@
 <?php
 
+class Template {
 
-class Template{
-
-
-    function __construct($idioma='ES')
+    function __construct($idioma = 'ES')
     {
         $this->idioma = $idioma;
-
-    }    
-
-
-
-    static function header($titulo,$descripcion='')
-    {
-
-        return "
-            <!doctype html>
-            <html lang=\"en\" data-bs-theme=\"light\">
-            <head>
-                <meta charset=\"utf-8\">
-                <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
-                <title>{$titulo}</title>
-                <meta name=\"description\" content=\"{$descripcion}\">
-                <!-- Bootstrap 6, bundled in assets/vendor/bootstrap6 (version in the JS bundle header). To load it from jsDelivr instead, replace both paths below with https://cdn.jsdelivr.net/npm/bootstrap@VERSION/dist/... -->
-                <link rel=\"stylesheet\" href=\"/assets/vendor/bootstrap6/css/bootstrap.min.css\">
-                <script type=\"importmap\">{\"imports\": {\"bootstrap\": \"./assets/vendor/bootstrap6/js/bootstrap.bundle.min.js\"}}</script>
-                <link rel=\"stylesheet\" href=\"/assets/css/base.css\">
-                <link rel=\"stylesheet\" href=\"/assets/css/style.css\">
-            </head>
-        ". self::navegacion()."
-        
-        <section class=\"hero\">
-            <div class=\"container\">
-
-        "
-        ;
     }
 
+    // XAMPP sirve la web desde una subcarpeta; en Linux puede servirse desde /.
+    // Así los CSS, JS e imágenes funcionan también con URLs reescritas.
+    public static function baseUrl()
+    {
+        $ruta = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '/index.php'));
+        return ($ruta === '/' || $ruta === '.') ? '' : rtrim($ruta, '/');
+    }
+
+    static function header($titulo, $descripcion = '', $paginaInterior = false)
+    {
+        $base = self::baseUrl();
+        $titulo = htmlspecialchars($titulo, ENT_QUOTES, 'UTF-8');
+        $descripcion = htmlspecialchars($descripcion, ENT_QUOTES, 'UTF-8');
+        $claseBody = $paginaInterior ? ' class="pagina-interior"' : '';
+
+        return '
+            <!DOCTYPE html>
+            <html lang="es">
+            <head>
+                <meta charset="utf-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+                <meta name="description" content="' . $descripcion . '" />
+                <meta name="author" content="" />
+                <title>' . $titulo . '</title>
+                <link rel="icon" type="image/x-icon" href="' . $base . '/assets/favicon.ico" />
+                <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+                <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+                <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700" rel="stylesheet" type="text/css" />
+                <link href="' . $base . '/assets/css/styles.css" rel="stylesheet" />
+            </head>
+            <body id="page-top"' . $claseBody . '>
+        ' . self::navegacion();
+    }
 
     static function navegacion()
     {
-        return "
-            <header class=\"site-header\">
-                <nav class=\"navbar lg:navbar-expand\" aria-label=\"Main\">
-                    <div class=\"container\">
-                        <a class=\"wordmark\" href=\"index.html\">
-                            <svg class=\"brand-glyph\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" aria-hidden=\"true\">
-                                <rect x=\"1.25\" y=\"1.25\" width=\"21.5\" height=\"21.5\" rx=\"6.5\" stroke=\"currentColor\" stroke-width=\"1.5\"/>
-                                <path d=\"M7 16.5V7.5M7 16.5h5.5\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\"/>
-                                <path d=\"M17 7.5v9M14 11h6\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" opacity=\".5\"/>
-                            </svg>
-                            <span>Ledgerline</span>
-                        </a>
+        $base = self::baseUrl();
 
-                        <dialog class=\"drawer drawer-end\" tabindex=\"-1\" id=\"navDrawer\" aria-labelledby=\"navDrawerLabel\">
-                            <div class=\"drawer-header\">
-                                <h5 class=\"drawer-title\" id=\"navDrawerLabel\">Menu</h5>
-                                <button type=\"button\" class=\"btn-close\" data-bs-dismiss=\"drawer\" aria-label=\"Close\"></button>
-                            </div>
-                            <div class=\"drawer-body mb-3 lg:mb-0\">
-                                <ul class=\"nav navbar-nav ms-auto lg:gap-5\">
-                                    <li class=\"nav-item\"><a class=\"nav-link\" href=\"#product\">Product</a></li>
-                                    <li class=\"nav-item\"><a class=\"nav-link\" href=\"#developers\">Developers</a></li>
-                                    <li class=\"nav-item\"><a class=\"nav-link\" href=\"pricing.html\">Pricing</a></li>
-                                    <li class=\"nav-item\"><a class=\"nav-link\" href=\"#security\">Security</a></li>
-                                </ul>
-                            </div>
-                        </dialog>
-
-                        <div class=\"d-flex align-items-center gap-3 ms-auto\">
-                            <button class=\"btn-icon\" type=\"button\" id=\"themeToggle\" aria-label=\"Toggle color mode\">
-                                <svg class=\"theme-icon-light\" width=\"18\" height=\"18\" viewBox=\"0 0 16 16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" aria-hidden=\"true\"><circle cx=\"8\" cy=\"8\" r=\"3.25\"/><path d=\"M8 1v1.5M8 13.5V15M15 8h-1.5M2.5 8H1m11-4-1 1M5 11l-1 1m0-8 1 1m6 6 1 1\"/></svg>
-                                <svg class=\"theme-icon-dark\" width=\"18\" height=\"18\" viewBox=\"0 0 16 16\" fill=\"currentColor\" aria-hidden=\"true\"><path d=\"M6 .278a.77.77 0 0 1 .08.858 7.2 7.2 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277q.792-.001 1.533-.16a.79.79 0 0 1 .81.316.73.73 0 0 1-.031.893A8.35 8.35 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.75.75 0 0 1 6 .278\"/></svg>
-                            </button>
-                            <a class=\"btn-text theme-secondary sign-in\" href=\"#developers\">Sign in</a>
-                            <a class=\"btn-solid theme-primary\" href=\"pricing.html\">Start building</a>
-                            <button class=\"btn-icon navbar-toggler\" type=\"button\" data-bs-toggle=\"drawer\" data-bs-target=\"#navDrawer\" aria-controls=\"navDrawer\" aria-label=\"Open navigation\">
-                                <span class=\"navbar-toggler-icon\" aria-hidden=\"true\"></span>
-                            </button>
-                        </div>
+        return '
+            <!-- Navigation: navegación original de index.html -->
+            <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
+                <div class="container">
+                    <a class="navbar-brand" href="' . $base . '/index.php#page-top"><img src="' . $base . '/img/navbar-logo.svg" alt="..." /></a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                        Menu
+                        <i class="fas fa-bars ms-1"></i>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarResponsive">
+                        <ul class="navbar-nav text-uppercase ms-auto py-4 py-lg-0">
+                            <li class="nav-item"><a class="nav-link" href="' . $base . '/index.php">Inicio</a></li>
+                            <li class="nav-item"><a class="nav-link" href="' . $base . '/usuarios/listado/0">Usuarios</a></li>
+                        </ul>
                     </div>
-                </nav>
-            </header>
-
-        ";
-
-
-
+                </div>
+            </nav>
+        ';
     }
-
 
     static function footer()
     {
-        return "
-                </div>
-            </section>
-                    <footer class=\"site-footer section pb-6\">
-                        <div class=\"container\">
-                            <div class=\"row g-6\">
-                                <div class=\"lg:col-4\">
-                                    <p class=\"wordmark mb-4\">
-                                        <svg class=\"brand-glyph\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" aria-hidden=\"true\">
-                                            <rect x=\"1.25\" y=\"1.25\" width=\"21.5\" height=\"21.5\" rx=\"6.5\" stroke=\"currentColor\" stroke-width=\"1.5\"/>
-                                            <path d=\"M7 16.5V7.5M7 16.5h5.5\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\"/>
-                                            <path d=\"M17 7.5v9M14 11h6\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" opacity=\".5\"/>
-                                        </svg>
-                                        <span>Ledgerline</span>
-                                    </p>
-                                    <p class=\"fg-2 fs-sm mb-0\" style=\"max-width:22rem\">
-                                        Payments, payouts and a double-entry ledger behind one API. Priced so
-                                        you can work out the bill yourself.
-                                    </p>
-                                </div>
-                                <div class=\"md:col-4 lg:col-2\">
-                                    <p class=\"eyebrow fs-xs fg-3 mb-4\">Product</p>
-                                    <ul class=\"link-list\">
-                                        <li><a href=\"index.html#product\">Payments</a></li>
-                                        <li><a href=\"index.html#product\">Payouts</a></li>
-                                        <li><a href=\"index.html#product\">Ledger API</a></li>
-                                        <li><a href=\"pricing.html\">Pricing</a></li>
-                                    </ul>
-                                </div>
-                                <div class=\"md:col-4 lg:col-2\">
-                                    <p class=\"eyebrow fs-xs fg-3 mb-4\">Developers</p>
-                                    <ul class=\"link-list\">
-                                        <li><a href=\"index.html#developers\">Quickstart</a></li>
-                                        <li><a href=\"index.html#developers\">API reference</a></li>
-                                        <li><a href=\"index.html#developers\">Status</a></li>
-                                        <li><a href=\"index.html#security\">Security</a></li>
-                                    </ul>
-                                </div>
-                                <div class=\"md:col-4 lg:col-4\">
-                                    <p class=\"eyebrow fs-xs fg-3 mb-4\">Regulatory</p>
-                                    <p class=\"fg-2 fs-sm mb-0\">
-                                        Ledgerline is a fictional company in a free website template. Nothing
-                                        here is a real financial product, a real rate, or regulated by anyone.
-                                    </p>
-                                </div>
-                            </div>
+        $base = self::baseUrl();
 
-                            <hr class=\"my-6\">
-
-                            <p class=\"fs-xs fg-3 mb-0\">&copy; <span data-year>\". date('Y') .\"</span> Ledgerline &mdash; a free Bootstrap 6 template.</p>
+        return '
+            <!-- Footer: pie original de index.html -->
+            <footer class="footer py-4">
+                <div class="container">
+                    <div class="row align-items-center">
+                        <div class="col-lg-4 text-lg-start">Copyright &copy; Your Website 2023</div>
+                        <div class="col-lg-4 my-3 my-lg-0">
+                            <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                            <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                            <a class="btn btn-dark btn-social mx-2" href="#!" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
                         </div>
-                    </footer>
-
-                    <script type=\"module\" src=\"assets/js/main.js\"></script>
-                </body>
+                        <div class="col-lg-4 text-lg-end">
+                            <a class="link-dark text-decoration-none me-3" href="#!">Privacy Policy</a>
+                            <a class="link-dark text-decoration-none" href="#!">Terms of Use</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+            <script src="' . $base . '/assets/js/scripts.js"></script>
+            <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
+            </body>
             </html>
-
-
-        ";
-
-
-
-
+        ';
     }
-
-
-
 }
