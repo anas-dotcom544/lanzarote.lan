@@ -7,8 +7,6 @@ class Template {
         $this->idioma = $idioma;
     }
 
-    // XAMPP sirve la web desde una subcarpeta; en Linux puede servirse desde /.
-    // Así los CSS, JS e imágenes funcionan también con URLs reescritas.
     public static function baseUrl()
     {
         $ruta = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '/index.php'));
@@ -49,7 +47,7 @@ class Template {
             <!-- Navigation: navegación original de index.html -->
             <nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
                 <div class="container">
-                    <a class="navbar-brand" href="' . $base . '/index.php#page-top"><img src="' . $base . '/img/navbar-logo.svg" alt="..." /></a>
+                    <a class="navbar-brand" href="' . $base . '/index.php#page-top"><img src="' . $base . '/img/lanzarote.png" alt="..." /></a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                         Menu
                         <i class="fas fa-bars ms-1"></i>
