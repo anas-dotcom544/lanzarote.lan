@@ -1,4 +1,4 @@
--- \. /var/www/html/lanzarote.lan/tablas/create_table_usuarios.sql
+-- \. /var/www/lanzarote.lan/tablas/create_tabla_usuarios.sql
 
 
 DROP TABLE usuarios;

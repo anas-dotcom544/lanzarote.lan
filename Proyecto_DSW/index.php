@@ -2,7 +2,6 @@
 
 require_once __DIR__ . '/includes/general.php';
 
-// Las URL /usuarios/listado/0 y ?seccion=usuarios&pagina=0 llevan al mismo caso.
 $seccion = $_GET['seccion'] ?? '';
 $esListadoUsuarios = ($seccion === 'usuarios');
 
@@ -14,8 +13,7 @@ echo Template::header(
 
 switch ($seccion) {
     case 'usuarios':
-        // Igual que en el proyecto del profesor: 10 registros por página.
-        // Validamos "pagina" antes de utilizarla para calcular el OFFSET de SQL.
+    
         $valorPagina = $_GET['pagina'] ?? 0;
         $pagina = filter_var(
             $valorPagina,
@@ -31,14 +29,12 @@ switch ($seccion) {
 
         $porPagina = TOTAL_PAGINAS_LISTADO;
 
-        // Conocer cuántos usuarios existen permite mostrar 1, 2, 3... hasta
-        // la última página real y ocultar "Siguiente" al llegar a ella.
         $consultaTotal = new Query('SELECT COUNT(*) AS total FROM usuarios');
         $registroTotal = $consultaTotal->recuperar();
         $totalUsuarios = (int) ($registroTotal['total'] ?? 0);
         $totalPaginas = (int) ceil($totalUsuarios / $porPagina);
 
-        // Si piden una página fuera del rango, mostrar la última disponible.
+        
         if ($totalPaginas === 0) {
             $pagina = 0;
         } elseif ($pagina >= $totalPaginas) {
@@ -48,7 +44,7 @@ switch ($seccion) {
 
         $usuarios = [];
         if ($totalUsuarios > 0) {
-            // ORDER BY garantiza que los usuarios mantienen el mismo orden.
+
             $query = new Query(
                 'SELECT id, nombre, apellido1, apellido2, fecha_nacimiento, email '
                 . 'FROM usuarios ORDER BY id ASC '
@@ -70,7 +66,6 @@ switch ($seccion) {
                         <table class="table table-striped table-hover align-middle">
                             <thead class="table-dark">
                                 <tr>
-                                    <th scope="col">#</th>
                                     <th scope="col">ID</th>
                                     <th scope="col">Nombre</th>
                                     <th scope="col">Apellido 1</th>
@@ -83,12 +78,11 @@ switch ($seccion) {
         ';
 
         if (empty($usuarios)) {
-            echo '<tr><td colspan="7" class="text-center py-4">No hay usuarios en esta página.</td></tr>';
+            echo '<tr><td colspan="6" class="text-center py-4">No hay usuarios en esta página.</td></tr>';
         } else {
             foreach ($usuarios as $indice => $registro) {
-                echo '<tr><th scope="row">' . ($offset + $indice + 1) . '</th>';
+                echo '<tr>';
 
-                // Escapamos lo que viene de la base de datos antes de imprimir HTML.
                 foreach (['id', 'nombre', 'apellido1', 'apellido2', 'fecha_nacimiento', 'email'] as $campo) {
                     echo '<td>' . htmlspecialchars(
                         (string) ($registro[$campo] ?? ''),
@@ -115,8 +109,6 @@ switch ($seccion) {
                 . $paginaAnterior . '">Anterior</a></li>';
         }
 
-        // Números visibles (1, 2, 3...) con el actual resaltado.
-        // En la URL las páginas comienzan en 0; en pantalla, en 1.
         for ($numeroPagina = 0; $numeroPagina < $totalPaginas; $numeroPagina++) {
             if ($numeroPagina === $pagina) {
                 echo '<li class="page-item active" aria-current="page">'
@@ -128,7 +120,6 @@ switch ($seccion) {
             }
         }
 
-        // Ocultamos "Siguiente" en la última página.
         if ($pagina < $totalPaginas - 1) {
             $paginaSiguiente = $pagina + 1;
             echo '<li class="page-item"><a class="page-link" href="' . $base . '/usuarios/listado/'
@@ -144,7 +135,7 @@ switch ($seccion) {
         break;
 
     default:
-        // Conservamos la portada original del proyecto Agency.
+        
         echo '
             <header class="masthead">
                 <div class="container">
