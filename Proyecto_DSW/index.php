@@ -13,7 +13,146 @@ echo Template::header(
 
 switch ($seccion) {
     case 'usuarios':
-    
+        switch ($_GET['oper'] ?? '') {
+            case 'alta':
+                $base = Template::baseUrl();
+                $boton_alta = '<input type="submit" class="btn btn-primary btn-xl text-uppercase" value="Alta de usuario" />';
+                $errores = false;
+                $disabled = '';
+                $mensajes_errores = '';
+                $mensaje_exito = '';
+                $_error_nombre = '';
+                $_error_apellido1 = '';
+                $_error_apellido2 = '';
+                $_error_fecha_nacimiento = '';
+                $_error_email = '';
+
+                if (($_POST['paso'] ?? '') == '1') {
+                    $_texto_errores = '';
+
+                    if (strlen($_POST['nombre']) < 3) {
+                        $_error_nombre = 'error';
+                        $_texto_errores = '<p>- El nombre debe tener al menos 3 caracteres.</p>';
+                        $errores = true;
+                    }
+
+                    if (strlen($_POST['apellido1']) < 3) {
+                        $_error_apellido1 = 'error';
+                        $_texto_errores .= '<p>- El primer apellido debe tener al menos 3 caracteres.</p>';
+                        $errores = true;
+                    }
+
+                    if (strlen($_POST['apellido2']) < 3) {
+                        $_error_apellido2 = 'error';
+                        $_texto_errores .= '<p>- El segundo apellido debe tener al menos 3 caracteres.</p>';
+                        $errores = true;
+                    }
+
+                    if (!fecha_valida($_POST['fecha_nacimiento'])) {
+                        $_error_fecha_nacimiento = 'error';
+                        $_texto_errores .= '<p>- La fecha de nacimiento no tiene un formato válido.</p>';
+                        $errores = true;
+                    }
+
+                    if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+                        $_error_email = 'error';
+                        $_texto_errores .= '<p>- El E-mail no tiene un formato válido.</p>';
+                        $errores = true;
+                    }
+
+                    if ($errores) {
+                        $mensajes_errores = "
+                            <div class=\"info_errores mb-5 mt-5\" role=\"alert\">
+                                {$_texto_errores}
+                            </div>
+                        ";
+                    } else {
+                        $mensaje_exito = '
+                            <div class="alert alert-success mb-5 mt-5" role="alert">
+                                <p>Operación realizada con éxito</p>
+                            </div>
+                        ';
+                        $boton_alta = '';
+                        $disabled = ' disabled="disabled" ';
+
+                        $query = new Query("
+                            INSERT INTO usuarios
+                            (
+                                 nombre
+                                ,apellido1
+                                ,apellido2
+                                ,fecha_nacimiento
+                                ,email
+                                ,fecha_alta
+                                ,ip_alta
+                                ,fecha_modi
+                                ,ip_modi
+                            )
+                            VALUES
+                            (
+                                 '" . $_POST['nombre'] . "'
+                                ,'" . $_POST['apellido1'] . "'
+                                ,'" . $_POST['apellido2'] . "'
+                                ,'" . $_POST['fecha_nacimiento'] . "'
+                                ,'" . $_POST['email'] . "'
+                                ,now()
+                                ,'" . $_SERVER['SERVER_ADDR'] . "'
+                                ,now()
+                                ,'" . $_SERVER['SERVER_ADDR'] . "'
+                            )
+                        ");
+                    }
+                }
+
+                $nombre = $_POST['nombre'] ?? '';
+                $apellido1 = $_POST['apellido1'] ?? '';
+                $apellido2 = $_POST['apellido2'] ?? '';
+                $fecha_nacimiento = $_POST['fecha_nacimiento'] ?? '';
+                $email = $_POST['email'] ?? '';
+
+                echo "
+                    <main class=\"page-section\">
+                        <div class=\"container pt-5\">
+                            <a href=\"{$base}/usuarios/listado/0\" class=\"btn btn-secondary mb-5\">Volver</a>
+                            <h1 class=\"text-center text-uppercase mb-4\">Alta de usuarios</h1>
+                            {$mensajes_errores}
+                            {$mensaje_exito}
+                            <form action=\"{$base}/usuarios/alta\" method=\"POST\">
+                                <input type=\"hidden\" name=\"paso\" value=\"1\" />
+
+                                <div class=\"mb-4 {$_error_nombre}\">
+                                    <label for=\"nombreID\" class=\"form-label\">Nombre</label>
+                                    <input {$disabled} type=\"text\" name=\"nombre\" class=\"form-control\" id=\"nombreID\" value=\"{$nombre}\" placeholder=\"Introduce tu nombre\">
+                                </div>
+
+                                <div class=\"mb-4 {$_error_apellido1}\">
+                                    <label for=\"apellido1ID\" class=\"form-label\">Primer apellido</label>
+                                    <input {$disabled} type=\"text\" name=\"apellido1\" class=\"form-control\" id=\"apellido1ID\" value=\"{$apellido1}\" placeholder=\"Introduce tu primer apellido\">
+                                </div>
+
+                                <div class=\"mb-4 {$_error_apellido2}\">
+                                    <label for=\"apellido2ID\" class=\"form-label\">Segundo apellido</label>
+                                    <input {$disabled} type=\"text\" name=\"apellido2\" class=\"form-control\" id=\"apellido2ID\" value=\"{$apellido2}\" placeholder=\"Introduce tu segundo apellido\">
+                                </div>
+
+                                <div class=\"mb-4 {$_error_fecha_nacimiento}\">
+                                    <label for=\"fecha_nacimientoID\" class=\"form-label\">Fecha nacimiento</label>
+                                    <input {$disabled} type=\"date\" name=\"fecha_nacimiento\" class=\"form-control\" id=\"fecha_nacimientoID\" value=\"{$fecha_nacimiento}\">
+                                </div>
+
+                                <div class=\"mb-4 {$_error_email}\">
+                                    <label for=\"emailID\" class=\"form-label\">Email</label>
+                                    <input {$disabled} type=\"email\" name=\"email\" class=\"form-control\" id=\"emailID\" value=\"{$email}\" placeholder=\"nombre@dominio.com\">
+                                </div>
+
+                                {$boton_alta}
+                            </form>
+                        </div>
+                    </main>
+                ";
+                break;
+
+            default:
         $valorPagina = $_GET['pagina'] ?? 0;
         $pagina = filter_var(
             $valorPagina,
@@ -62,6 +201,7 @@ switch ($seccion) {
             <main class="page-section">
                 <div class="container pt-5">
                     <h1 class="text-center text-uppercase mb-4">Listado de usuarios</h1>
+                    <a href="' . $base . '/usuarios/alta" class="btn btn-primary mb-4">Alta de Usuario</a>
                     <div class="table-responsive">
                         <table class="table table-striped table-hover align-middle">
                             <thead class="table-dark">
@@ -132,6 +272,8 @@ switch ($seccion) {
                 </div>
             </main>
         ';
+                break;
+        }
         break;
 
     default:
@@ -139,7 +281,7 @@ switch ($seccion) {
         echo '
             <header class="masthead">
                 <div class="container">
-                    <div class="masthead-subheading">Bienvenido!</div>
+                    <div class="masthead-subheading">¡Bienvenido!</div>
                     <div class="masthead-heading text-uppercase">Un placer tenerte aqui</div>
                     <a class="btn btn-primary btn-xl text-uppercase" href="'
                     . Template::baseUrl() . '/usuarios/listado/0">Ver usuarios</a>

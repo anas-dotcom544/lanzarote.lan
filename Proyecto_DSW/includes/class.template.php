@@ -34,6 +34,7 @@ class Template {
                 <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
                 <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700" rel="stylesheet" type="text/css" />
                 <link href="' . $base . '/assets/css/styles.css" rel="stylesheet" />
+                <link href="' . $base . '/css/estilos.css" rel="stylesheet" />
             </head>
             <body id="page-top"' . $claseBody . '>
         ' . self::navegacion();
@@ -56,6 +57,7 @@ class Template {
                         <ul class="navbar-nav text-uppercase ms-auto py-4 py-lg-0">
                             <li class="nav-item"><a class="nav-link" href="' . $base . '/index.php">Inicio</a></li>
                             <li class="nav-item"><a class="nav-link" href="' . $base . '/usuarios/listado/0">Usuarios</a></li>
+                            <li class="nav-item"><a class="nav-link" href="' . $base . '/usuarios/alta">Alta de usuario</a></li>
                         </ul>
                     </div>
                 </div>
