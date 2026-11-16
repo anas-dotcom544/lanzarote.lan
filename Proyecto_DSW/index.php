@@ -304,7 +304,83 @@ switch ($seccion) {
                 ";
                 break;
 
+            
+            case 'eliminar':
+                $base = Template::baseUrl();
+                $id = (int) ($_GET['id'] ?? 0);
+            
+                // Buscamos el usuario que queremos eliminar
+                $query = new Query("SELECT * FROM usuarios WHERE id = {$id}");
+                $usuario = $query->recuperar();
+            
+                if (!$usuario) {
+                    echo "
+                        <main class=\"page-section\">
+                            <div class=\"container pt-5\">
+                                <a href=\"{$base}/usuarios/listado/0\" class=\"btn btn-secondary mb-5\">Volver</a>
+                                <p>Usuario no encontrado.</p>
+                            </div>
+                        </main>
+                    ";
+                    break;
+                }
+            
+                // Si esta confirmado la eliminacion, borramos al usuario de la bbdd
+                if (($_POST['paso'] ?? '') == '1') {
+                    $query = new Query("DELETE FROM usuarios WHERE id = {$id}");
+            
+                    echo "
+                        <main class=\"page-section\">
+                            <div class=\"container pt-5\">
+                                <div class=\"alert alert-success mb-5\" role=\"alert\">
+                                    Usuario eliminado correctamente.
+                                </div>
+                                <a href=\"{$base}/usuarios/listado/0\" class=\"btn btn-primary\">
+                                    Volver al listado.
+                                </a>
+                            </div>
+                        </main>
+                    ";
+                } else {
+                    // Mostramos los datos del usuario antes de confirmar la eliminacion
+            
+                    $nombre = htmlspecialchars($usuario['nombre'], ENT_QUOTES, 'UTF-8');
+                    $apellido1 = htmlspecialchars($usuario['apellido1'], ENT_QUOTES, 'UTF-8');
+                    $apellido2 = htmlspecialchars($usuario['apellido2'], ENT_QUOTES, 'UTF-8');
+                    $email = htmlspecialchars($usuario['email'], ENT_QUOTES, 'UTF-8');
+            
+                    echo "
+                        <main class=\"page-section\">
+                            <div class=\"container pt-5\">
+                                <h1 class=\"text-center text-uppercase mb-4\">Eliminar usuario</h1>
+            
+                                <div class=\"alert alert-warning\" role=\"alert\">
+                                    ¿Estas seguro de que quieres eliminar este usuario?
+                                </div>
+            
+                                <p><strong>ID:</strong> {$id}</p>
+                                <p><strong>Nombre:</strong> {$nombre}</p>
+                                <p><strong>Primer apellido:</strong> {$apellido1}</p>
+                                <p><strong>Segundo apellido:</strong> {$apellido2}</p>
+                                <p><strong>Email:</strong> {$email}</p>
+            
+                                <form action=\"{$base}/usuarios/eliminar/{$id}\" method=\"POST\">
+                                    <input type=\"hidden\" name=\"paso\" value=\"1\" />
+                                    <input type=\"submit\" class=\"btn btn-danger\" value=\"Eliminar usuario\" />
+                                    <a href=\"{$base}/usuarios/listado/0\" class=\"btn btn-secondary\">
+                                        Cancelar
+                                    </a>
+                                </form>
+                            </div>
+                        </main>
+                    ";
+                }
+            
+                break;
+            
+            
             default:
+
         $valorPagina = $_GET['pagina'] ?? 0;
         $pagina = filter_var(
             $valorPagina,
@@ -385,8 +461,13 @@ switch ($seccion) {
                     ) . '</td>';
                 }
                 $idUsuario = (int) $registro['id'];
-                echo '<td><a class="btn btn-outline-primary btn-sm" href="' . $base
-                    . '/usuarios/editar/' . $idUsuario . '">Editar</a></td>';
+                echo '<td>
+                        <a class="btn btn-outline-primary btn-sm" href="' . $base . '/usuarios/editar/' . $idUsuario . '">Modificar
+                        </a>
+                        <a class="btn btn-outline-danger btn-sm" href="' . $base . '/usuarios/eliminar/' . $idUsuario . '">Eliminar
+                        </a>
+                      </td>';
+
                 echo '</tr>';
             }
         }

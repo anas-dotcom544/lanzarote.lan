@@ -4,6 +4,8 @@ RewriteEngine On
 
 RewriteRule ^usuarios/editar/([0-9]+)/?$ index.php?seccion=usuarios&oper=editar&id=$1 [L]
 
+RewriteRule ^usuarios/eliminar/([0-9]+)/?$ index.php?seccion=usuarios&oper=eliminar&id=$1 [L]
+
 RewriteRule ^usuarios/([^/]+)/([0-9]+)/?$ index.php?seccion=usuarios&oper=$1&pagina=$2 [L]
 
 RewriteRule ^usuarios/([^/]+)/?$ index.php?seccion=usuarios&oper=$1 [L]
