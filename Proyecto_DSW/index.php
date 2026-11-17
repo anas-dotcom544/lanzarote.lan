@@ -13,6 +13,8 @@ echo Template::header(
 
 switch ($seccion) {
     case 'usuarios':
+        $modeloUsuario = new Usuario();
+
         switch ($_GET['oper'] ?? '') {
             case 'alta':
                 $base = Template::baseUrl();
@@ -75,32 +77,7 @@ switch ($seccion) {
                         $boton_alta = '';
                         $disabled = ' disabled="disabled" ';
 
-                        $query = new Query("
-                            INSERT INTO usuarios
-                            (
-                                 nombre
-                                ,apellido1
-                                ,apellido2
-                                ,fecha_nacimiento
-                                ,email
-                                ,fecha_alta
-                                ,ip_alta
-                                ,fecha_modi
-                                ,ip_modi
-                            )
-                            VALUES
-                            (
-                                 '" . $_POST['nombre'] . "'
-                                ,'" . $_POST['apellido1'] . "'
-                                ,'" . $_POST['apellido2'] . "'
-                                ,'" . $_POST['fecha_nacimiento'] . "'
-                                ,'" . $_POST['email'] . "'
-                                ,now()
-                                ,'" . $_SERVER['SERVER_ADDR'] . "'
-                                ,now()
-                                ,'" . $_SERVER['SERVER_ADDR'] . "'
-                            )
-                        ");
+                        $modeloUsuario->insertar($_POST);
                     }
                 }
 
@@ -156,8 +133,7 @@ switch ($seccion) {
                 $base = Template::baseUrl();
                 $id = (int) ($_GET['id'] ?? 0);
 
-                $query = new Query("SELECT * FROM usuarios WHERE id = {$id}");
-                $usuario = $query->recuperar();
+                $usuario = $modeloUsuario->recuperar($id);
 
                 if (!$usuario) {
                     echo "
@@ -227,17 +203,9 @@ switch ($seccion) {
                             </div>
                         ";
                     } else {
-                        $query = new Query("
-                            UPDATE usuarios
-                            SET nombre = '" . $_POST['nombre'] . "',
-                                apellido1 = '" . $_POST['apellido1'] . "',
-                                apellido2 = '" . $_POST['apellido2'] . "',
-                                fecha_nacimiento = '" . $_POST['fecha_nacimiento'] . "',
-                                email = '" . $_POST['email'] . "',
-                                fecha_modi = now(),
-                                ip_modi = '" . $_SERVER['SERVER_ADDR'] . "'
-                            WHERE id = {$id}
-                        ");
+                        $datosUsuario = $_POST;
+                        $datosUsuario['id'] = $id;
+                        $modeloUsuario->modificar($datosUsuario);
 
                         $mensaje_exito = '
                             <div class="alert alert-success mb-5 mt-5" role="alert">
@@ -271,6 +239,7 @@ switch ($seccion) {
                             {$mensaje_exito}
                             <form action=\"{$base}/usuarios/editar/{$id}\" method=\"POST\">
                                 <input type=\"hidden\" name=\"paso\" value=\"1\" />
+                                <input type=\"hidden\" name=\"id\" value=\"{$id}\" />
 
                                 <div class=\"mb-4 {$_error_nombre}\">
                                     <label for=\"nombreID\" class=\"form-label\">Nombre</label>
@@ -310,8 +279,7 @@ switch ($seccion) {
                 $id = (int) ($_GET['id'] ?? 0);
             
                 // Buscamos el usuario que queremos eliminar
-                $query = new Query("SELECT * FROM usuarios WHERE id = {$id}");
-                $usuario = $query->recuperar();
+                $usuario = $modeloUsuario->recuperar($id);
             
                 if (!$usuario) {
                     echo "
@@ -327,7 +295,7 @@ switch ($seccion) {
             
                 // Si esta confirmado la eliminacion, borramos al usuario de la bbdd
                 if (($_POST['paso'] ?? '') == '1') {
-                    $query = new Query("DELETE FROM usuarios WHERE id = {$id}");
+                    $modeloUsuario->eliminar($id);
             
                     echo "
                         <main class=\"page-section\">
