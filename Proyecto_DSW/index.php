@@ -462,11 +462,20 @@ switch ($seccion) {
                 }
                 $idUsuario = (int) $registro['id'];
                 echo '<td>
-                        <a class="btn btn-outline-primary btn-sm" href="' . $base . '/usuarios/editar/' . $idUsuario . '">Modificar
-                        </a>
-                        <a class="btn btn-outline-danger btn-sm" href="' . $base . '/usuarios/eliminar/' . $idUsuario . '">Eliminar
-                        </a>
-                      </td>';
+                          <a class="btn btn-outline-primary btn-sm me-1 d-inline-flex align-items-center justify-content-center"
+                             style="width: 36px; height: 36px;"
+                             href="' . $base . '/usuarios/editar/' . $idUsuario . '"
+                             title="Modificar usuario">
+                              <i class="bi bi-pencil-square fs-5"></i>
+                          </a>
+
+                          <a class="btn btn-outline-danger btn-sm d-inline-flex align-items-center justify-content-center"
+                             style="width: 36px; height: 36px;"
+                             href="' . $base . '/usuarios/eliminar/' . $idUsuario . '"
+                             title="Eliminar usuario">
+                              <i class="bi bi-trash fs-5"></i>
+                          </a>
+                     </td>';
 
                 echo '</tr>';
             }
