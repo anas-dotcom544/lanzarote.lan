@@ -77,7 +77,14 @@ switch ($seccion) {
                         $boton_alta = '';
                         $disabled = ' disabled="disabled" ';
 
-                        $modeloUsuario->insertar($_POST);
+                        $datos_insertar = array();
+                        $datos_insertar['nombre']           = $_POST['nombre'];
+                        $datos_insertar['apellido1']        = $_POST['apellido1'];
+                        $datos_insertar['apellido2']        = $_POST['apellido2'];
+                        $datos_insertar['fecha_nacimiento'] = $_POST['fecha_nacimiento'];
+                        $datos_insertar['email']            = $_POST['email'];
+
+                        $modeloUsuario->insertar($datos_insertar);
                     }
                 }
 
@@ -203,9 +210,14 @@ switch ($seccion) {
                             </div>
                         ";
                     } else {
-                        $datosUsuario = $_POST;
-                        $datosUsuario['id'] = $id;
-                        $modeloUsuario->modificar($datosUsuario);
+                        $datos_modificar = array();
+                        $datos_modificar['nombre']           = $_POST['nombre'];
+                        $datos_modificar['apellido1']        = $_POST['apellido1'];
+                        $datos_modificar['apellido2']        = $_POST['apellido2'];
+                        $datos_modificar['fecha_nacimiento'] = $_POST['fecha_nacimiento'];
+                        $datos_modificar['email']            = $_POST['email'];
+
+                        $modeloUsuario->modificar($datos_modificar, $id);
 
                         $mensaje_exito = '
                             <div class="alert alert-success mb-5 mt-5" role="alert">
@@ -363,33 +375,33 @@ switch ($seccion) {
         }
 
         $porPagina = TOTAL_PAGINAS_LISTADO;
+        $offset = $pagina * $porPagina;
 
-        $consultaTotal = new Query('SELECT COUNT(*) AS total FROM usuarios');
-        $registroTotal = $consultaTotal->recuperar();
-        $totalUsuarios = (int) ($registroTotal['total'] ?? 0);
+        $datos_usuarios = $modeloUsuario->listado([
+            'select' => '*',
+            'limit' => $porPagina,
+            'offset' => $offset,
+            'where' => null
+        ]);
+
+        $totalUsuarios = (int) $datos_usuarios['total_registros'];
         $totalPaginas = (int) ceil($totalUsuarios / $porPagina);
 
-        
         if ($totalPaginas === 0) {
             $pagina = 0;
         } elseif ($pagina >= $totalPaginas) {
             $pagina = $totalPaginas - 1;
+            $offset = $pagina * $porPagina;
+
+            $datos_usuarios = $modeloUsuario->listado([
+                'select' => '*',
+                'limit' => $porPagina,
+                'offset' => $offset,
+                'where' => null
+            ]);
         }
-        $offset = $pagina * $porPagina;
 
-        $usuarios = [];
-        if ($totalUsuarios > 0) {
-
-            $query = new Query(
-                'SELECT id, nombre, apellido1, apellido2, fecha_nacimiento, email '
-                . 'FROM usuarios ORDER BY id ASC '
-                . 'LIMIT ' . $porPagina . ' OFFSET ' . $offset
-            );
-
-            while ($registro = $query->recuperar()) {
-                $usuarios[] = $registro;
-            }
-        }
+        $usuarios = $datos_usuarios['registros'];
 
         $base = Template::baseUrl();
 

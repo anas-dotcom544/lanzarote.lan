@@ -10,8 +10,6 @@ spl_autoload_register(function ($class_name) {
 
     if ($class_name == 'BBDD' || $class_name == 'Query')
         $subdirectorio = 'bbdd/';
-    elseif ($class_name == 'Usuario')
-        $subdirectorio = 'usuario/';
     elseif ($class_name == 'Template')
         $subdirectorio = '';
 

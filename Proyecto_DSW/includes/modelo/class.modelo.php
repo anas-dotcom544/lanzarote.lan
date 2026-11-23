@@ -2,144 +2,177 @@
 
 class Modelo
 {
-    private $tabla;
 
-    function __construct()
+    function inicializar($datos)
     {
-        $this->tabla = 'usuarios';
-    }
+
+        $query = new Query("
+
+            SELECT COLUMN_NAME 
+            FROM   information_schema.columns
+            WHERE  table_name = '{$this->tabla}' 
+            AND    table_schema = '". BBDD::$baseDatos ."';
 
 
-    // Escapa los valores de texto antes de construir la consulta SQL
-    private function escapar($valor)
-    {
-        return BBDD::getInstancia()->getConexion()->real_escape_string((string) $valor);
-    }
+        ");
 
 
-    // Recupera un usuario por su ID
-    function recuperarUsuario($id)
-    {
-        $id = (int) $id;
+        while($registro = $query->recuperar())
+        {
 
-        if ($id <= 0) {
-            return null;
+            $campo_nuevo = $registro['COLUMN_NAME'];
+
+            $this->$campo_nuevo = $datos[$campo_nuevo];
+    
         }
 
+    }
+
+    function eliminar($id)
+    {
+        $query = new Query("
+            DELETE FROM {$this->tabla} WHERE id = '{$id}';
+        ");
+    }
+
+
+    function recuperar($id)
+    {
         $query = new Query("
             SELECT *
             FROM {$this->tabla}
             WHERE id = '{$id}';
         ");
 
-        return $query->recuperar();
+        $registro = $query->recuperar();
+
+        $this->inicializar($registro);
+
+        return $registro;
+
     }
 
 
-    function insertarUsuario($registro)
+
+    function insertar($registro)
     {
-        $query = new Query("
+        $claves_insertar = $values_insertar = '';
+
+
+        foreach($registro as $clave => $valor)
+        {
+
+            $claves_insertar .= " {$clave}, ";
+            $values_insertar .= " '{$valor}', ";    
+        }
+
+
+        $sql = "
             INSERT INTO {$this->tabla}
             (
-                 nombre
-                ,apellido1
-                ,apellido2
-                ,fecha_nacimiento
-                ,email
-                ,fecha_alta
-                ,ip_alta
-                ,fecha_modi
-                ,ip_modi
+                 {$claves_insertar}
+
+                 fecha_alta   
+                ,ip_alta      
+
             )
             VALUES
             (
-                '". $registro['nombre'] ."'
-                ,'". $registro['apellido1'] ."'
-                ,'". $registro['apellido2'] ."'
-                ,'". $registro['fecha_nacimiento'] ."'
-                ,'". $registro['email'] ."'
-                ,now()
-                ,'". $_SERVER['SERVER_ADDR'] ."'
-                ,now()
-                ,'". $_SERVER['SERVER_ADDR'] ."'
-            )
-        ");
-    
+                {$values_insertar}
+
+
+                 now()
+                ,'". $_SERVER['SERVER_ADDR']    ."'
+                
+            );
+        
+        ";
+
+        //echo $sql;exit;
+
+
+        $query = new Query($sql);
+
         return $query->total;
+
     }
 
 
-    // Elimina un usuario por su ID
-    function eliminarUsuario($id)
+    function modificar($registro,$id)
     {
-        $id = (int) $id;
+        $updates = '';
 
-        if ($id <= 0) {
-            return 0;
+        foreach($registro as $clave => $valor)
+        {
+            $updates .= " {$clave} = '{$valor}', ";
         }
 
-        $query = new Query("
-            DELETE FROM {$this->tabla}
-            WHERE id = '{$id}';
-        ");
-
-        return $query->total;
-    }
-
-
-    function modificarUsuario($registro)
-    {
-        $id = (int) ($registro['id'] ?? 0);
-
-        if ($id <= 0) {
-            return 0;
-        }
 
         $query = new Query("
             UPDATE {$this->tabla}
-            SET
-                 nombre             = '". $registro['nombre'] ."'
-                ,apellido1          = '". $registro['apellido1'] ."'
-                ,apellido2          = '". $registro['apellido2'] ."'
-                ,fecha_nacimiento   = '". $registro['fecha_nacimiento'] ."'
-                ,email              = '". $registro['email'] ."'
+
+            SET {$updates}
                 ,fecha_modi         = now()
-                ,ip_modi            = '". $_SERVER['SERVER_ADDR'] ."'
+                ,ip_modi            = '". $_SERVER['SERVER_ADDR']    ."'
+
             WHERE id = '{$id}'
+        
         ");
 
         return $query->total;
     }
 
 
-    // Devuelve el número total de usuarios
-    function contarUsuarios()
+
+    function listado($consulta=[])
     {
-        $query = new Query("SELECT COUNT(*) AS total FROM {$this->tabla}");
-        $registro = $query->recuperar();
+        $devolver = array();
 
-        return (int) ($registro['total'] ?? 0);
-    }
+        $select = is_null($consulta['select']) ? '*': $consulta['select'];
+        $limit  = is_null($consulta['limit'])  ? ' ': "LIMIT {$consulta['limit']}";
+        $offset = is_null($consulta['offset']) ? ' ': "OFFSET {$consulta['offset']}";
 
+        $where = '';
 
-    // Recupera los usuarios correspondientes a una página del listado
-    function listarUsuarios($limite, $offset)
-    {
-        $query = new Query("
-            SELECT *
-            FROM {$this->tabla}
-            ORDER BY fecha_alta DESC
-            LIMIT {$limite}
-            OFFSET {$offset}
-        ");
-
-        $usuarios = [];
-
-        while ($registro = $query->recuperar())
+        if(!is_null($consulta['where']))
         {
-            $usuarios[] = $registro;
+            foreach($consulta['where'] as $clave => $valor)
+            {
+                $where .= " AND {$clave} = '{$valor}' ";
+            }
         }
 
-        return $usuarios;
+        $query = new Query("
+            SELECT COUNT(*) AS total_registros
+            FROM {$this->tabla}
+            WHERE 1 = 1 {$where}
+        ");
+
+        $registro = $query->recuperar();
+
+        $devolver['total_registros'] = $registro['total_registros'];
+
+
+        $query = new Query("
+            SELECT {$select}
+            FROM {$this->tabla}
+            WHERE 1 = 1 {$where}
+            {$limit}
+            {$offset}
+        ");
+        
+        $registros = array();
+        while($registro = $query->recuperar())
+        {
+            $registros[$registro['id']] = $registro;
+
+        }
+
+        $devolver['registros'] = $registros;
+        
+
+        return $devolver;
+
     }
+
 }
