@@ -61,6 +61,13 @@ class Template {
                             <li class="nav-item"><a class="nav-link" href="' . $base . '/usuarios/alta">Alta de usuario</a></li>
                         </ul>
                     </div>
+                    <div class="idiomas">
+                    <div class="idiomas">
+                        <a href="http://en.lanzarote.lan' . $base . '/"><img src="' . $base . '/img/flags/en.svg" alt="English" width="24" height="18" /></a>
+                        <a href="http://www.lanzarote.lan' . $base . '/"><img src="' . $base . '/img/flags/es.svg" alt="Español" width="24" height="18" /></a>
+                        <a href="http://de.lanzarote.lan' . $base . '/index.php"><img src="' . $base . '/img/flags/de.svg" alt="Deutsch" width="24" height="18" /></a>
+                    </div>
+                    </div>
                 </div>
             </nav>
         ';

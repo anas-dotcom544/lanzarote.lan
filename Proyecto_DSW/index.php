@@ -18,7 +18,7 @@ switch ($seccion) {
         switch ($_GET['oper'] ?? '') {
             case 'alta':
                 $base = Template::baseUrl();
-                $boton_alta = '<input type="submit" class="btn btn-primary btn-xl text-uppercase" value="Alta de usuario" />';
+                $boton_alta = '<input type="submit" class="btn btn-primary btn-xl text-uppercase" value="' . Idioma::lit('alta_usuario') . '" />';
                 $errores = false;
                 $disabled = '';
                 $mensajes_errores = '';
@@ -34,31 +34,31 @@ switch ($seccion) {
 
                     if (strlen($_POST['nombre']) < 3) {
                         $_error_nombre = 'error';
-                        $_texto_errores = '<p>- El nombre debe tener al menos 3 caracteres.</p>';
+                        $_texto_errores = '<p>- ' . sprintf(Idioma::lit('error_caracteres'), 'nombre', '3') . '.</p>';
                         $errores = true;
                     }
 
                     if (strlen($_POST['apellido1']) < 3) {
                         $_error_apellido1 = 'error';
-                        $_texto_errores .= '<p>- El primer apellido debe tener al menos 3 caracteres.</p>';
+                        $_texto_errores .= '<p>- ' . sprintf(Idioma::lit('error_caracteres'), 'Primer Apellido', '3') . '.</p>';
                         $errores = true;
                     }
 
                     if (strlen($_POST['apellido2']) < 3) {
                         $_error_apellido2 = 'error';
-                        $_texto_errores .= '<p>- El segundo apellido debe tener al menos 3 caracteres.</p>';
+                        $_texto_errores .= '<p>- ' . sprintf(Idioma::lit('error_caracteres'), 'Segundo Apellido', '3') . '.</p>';
                         $errores = true;
                     }
 
                     if (!fecha_valida($_POST['fecha_nacimiento'])) {
                         $_error_fecha_nacimiento = 'error';
-                        $_texto_errores .= '<p>- La fecha de nacimiento no tiene un formato válido.</p>';
+                        $_texto_errores .= '<p>- ' . sprintf(Idioma::lit('error_formato_invalido'), 'Fecha Nacimiento') . '.</p>';
                         $errores = true;
                     }
 
                     if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
                         $_error_email = 'error';
-                        $_texto_errores .= '<p>- El E-mail no tiene un formato válido.</p>';
+                        $_texto_errores .= '<p>- ' . sprintf(Idioma::lit('error_formato_invalido'), 'E-mail') . '.</p>';
                         $errores = true;
                     }
 
@@ -71,7 +71,7 @@ switch ($seccion) {
                     } else {
                         $mensaje_exito = '
                             <div class="alert alert-success mb-5 mt-5" role="alert">
-                                <p>Operación realizada con éxito</p>
+                                <p>' . Idioma::lit('operacion_exito') . '</p>
                             </div>
                         ';
                         $boton_alta = '';
@@ -105,28 +105,28 @@ switch ($seccion) {
                                 <input type=\"hidden\" name=\"paso\" value=\"1\" />
 
                                 <div class=\"mb-4 {$_error_nombre}\">
-                                    <label for=\"nombreID\" class=\"form-label\">Nombre</label>
-                                    <input {$disabled} type=\"text\" name=\"nombre\" class=\"form-control\" id=\"nombreID\" value=\"{$nombre}\" placeholder=\"Introduce tu nombre\">
+                                    <label for=\"nombreID\" class=\"form-label\">". Idioma::lit('nombre') ."</label>
+                                    <input {$disabled} type=\"text\" name=\"nombre\" class=\"form-control\" id=\"nombreID\" value=\"{$nombre}\" placeholder=\"". sprintf(Idioma::lit('introduce_tu'), 'nombre') ."\">
                                 </div>
 
                                 <div class=\"mb-4 {$_error_apellido1}\">
-                                    <label for=\"apellido1ID\" class=\"form-label\">Primer apellido</label>
-                                    <input {$disabled} type=\"text\" name=\"apellido1\" class=\"form-control\" id=\"apellido1ID\" value=\"{$apellido1}\" placeholder=\"Introduce tu primer apellido\">
+                                    <label for=\"apellido1ID\" class=\"form-label\">". Idioma::lit('apellido1') ."</label>
+                                    <input {$disabled} type=\"text\" name=\"apellido1\" class=\"form-control\" id=\"apellido1ID\" value=\"{$apellido1}\" placeholder=\"". sprintf(Idioma::lit('introduce_tu'), 'Primer Apellido') ."\">
                                 </div>
 
                                 <div class=\"mb-4 {$_error_apellido2}\">
-                                    <label for=\"apellido2ID\" class=\"form-label\">Segundo apellido</label>
-                                    <input {$disabled} type=\"text\" name=\"apellido2\" class=\"form-control\" id=\"apellido2ID\" value=\"{$apellido2}\" placeholder=\"Introduce tu segundo apellido\">
+                                    <label for=\"apellido2ID\" class=\"form-label\">". Idioma::lit('apellido2') ."</label>
+                                    <input {$disabled} type=\"text\" name=\"apellido2\" class=\"form-control\" id=\"apellido2ID\" value=\"{$apellido2}\" placeholder=\"". sprintf(Idioma::lit('introduce_tu'), 'Segundo Apellido') ."\">
                                 </div>
 
                                 <div class=\"mb-4 {$_error_fecha_nacimiento}\">
-                                    <label for=\"fecha_nacimientoID\" class=\"form-label\">Fecha nacimiento</label>
+                                    <label for=\"fecha_nacimientoID\" class=\"form-label\">". Idioma::lit('fecha_nacimiento') ."</label>
                                     <input {$disabled} type=\"date\" name=\"fecha_nacimiento\" class=\"form-control\" id=\"fecha_nacimientoID\" value=\"{$fecha_nacimiento}\">
                                 </div>
 
                                 <div class=\"mb-4 {$_error_email}\">
-                                    <label for=\"emailID\" class=\"form-label\">Email</label>
-                                    <input {$disabled} type=\"email\" name=\"email\" class=\"form-control\" id=\"emailID\" value=\"{$email}\" placeholder=\"nombre@dominio.com\">
+                                    <label for=\"emailID\" class=\"form-label\">". Idioma::lit('email') ."</label>
+                                    <input {$disabled} type=\"email\" name=\"email\" class=\"form-control\" id=\"emailID\" value=\"{$email}\" placeholder=\"". Idioma::lit('email_generico') ."\">
                                 </div>
 
                                 {$boton_alta}
@@ -175,31 +175,31 @@ switch ($seccion) {
 
                     if (strlen($_POST['nombre']) < 3) {
                         $_error_nombre = 'error';
-                        $_texto_errores = '<p>- El nombre debe tener al menos 3 caracteres.</p>';
+                        $_texto_errores = '<p>- ' . sprintf(Idioma::lit('error_caracteres'), 'nombre', '3') . '.</p>';
                         $errores = true;
                     }
 
                     if (strlen($_POST['apellido1']) < 3) {
                         $_error_apellido1 = 'error';
-                        $_texto_errores .= '<p>- El primer apellido debe tener al menos 3 caracteres.</p>';
+                        $_texto_errores .= '<p>- ' . sprintf(Idioma::lit('error_caracteres'), 'Primer Apellido', '3') . '.</p>';
                         $errores = true;
                     }
 
                     if (strlen($_POST['apellido2']) < 3) {
                         $_error_apellido2 = 'error';
-                        $_texto_errores .= '<p>- El segundo apellido debe tener al menos 3 caracteres.</p>';
+                        $_texto_errores .= '<p>- ' . sprintf(Idioma::lit('error_caracteres'), 'Segundo Apellido', '3') . '.</p>';
                         $errores = true;
                     }
 
                     if (!fecha_valida($_POST['fecha_nacimiento'])) {
                         $_error_fecha_nacimiento = 'error';
-                        $_texto_errores .= '<p>- La fecha de nacimiento no tiene un formato válido.</p>';
+                        $_texto_errores .= '<p>- ' . sprintf(Idioma::lit('error_formato_invalido'), 'Fecha Nacimiento') . '.</p>';
                         $errores = true;
                     }
 
                     if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
                         $_error_email = 'error';
-                        $_texto_errores .= '<p>- El E-mail no tiene un formato válido.</p>';
+                        $_texto_errores .= '<p>- ' . sprintf(Idioma::lit('error_formato_invalido'), 'E-mail') . '.</p>';
                         $errores = true;
                     }
 
@@ -221,7 +221,7 @@ switch ($seccion) {
 
                         $mensaje_exito = '
                             <div class="alert alert-success mb-5 mt-5" role="alert">
-                                <p>Operación realizada con éxito</p>
+                                <p>' . Idioma::lit('operacion_exito') . '</p>
                             </div>
                         ';
                         $boton_editar = '';
@@ -254,28 +254,28 @@ switch ($seccion) {
                                 <input type=\"hidden\" name=\"id\" value=\"{$id}\" />
 
                                 <div class=\"mb-4 {$_error_nombre}\">
-                                    <label for=\"nombreID\" class=\"form-label\">Nombre</label>
-                                    <input {$disabled} type=\"text\" name=\"nombre\" class=\"form-control\" id=\"nombreID\" value=\"{$nombre_form}\" placeholder=\"Introduce tu nombre\">
+                                    <label for=\"nombreID\" class=\"form-label\">". Idioma::lit('nombre') ."</label>
+                                    <input {$disabled} type=\"text\" name=\"nombre\" class=\"form-control\" id=\"nombreID\" value=\"{$nombre_form}\" placeholder=\"". sprintf(Idioma::lit('introduce_tu'), 'nombre') ."\">
                                 </div>
 
                                 <div class=\"mb-4 {$_error_apellido1}\">
-                                    <label for=\"apellido1ID\" class=\"form-label\">Primer apellido</label>
-                                    <input {$disabled} type=\"text\" name=\"apellido1\" class=\"form-control\" id=\"apellido1ID\" value=\"{$apellido1_form}\" placeholder=\"Introduce tu primer apellido\">
+                                    <label for=\"apellido1ID\" class=\"form-label\">". Idioma::lit('apellido1') ."</label>
+                                    <input {$disabled} type=\"text\" name=\"apellido1\" class=\"form-control\" id=\"apellido1ID\" value=\"{$apellido1_form}\" placeholder=\"". sprintf(Idioma::lit('introduce_tu'), 'Primer Apellido') ."\">
                                 </div>
 
                                 <div class=\"mb-4 {$_error_apellido2}\">
-                                    <label for=\"apellido2ID\" class=\"form-label\">Segundo apellido</label>
-                                    <input {$disabled} type=\"text\" name=\"apellido2\" class=\"form-control\" id=\"apellido2ID\" value=\"{$apellido2_form}\" placeholder=\"Introduce tu segundo apellido\">
+                                    <label for=\"apellido2ID\" class=\"form-label\">". Idioma::lit('apellido2') ."</label>
+                                    <input {$disabled} type=\"text\" name=\"apellido2\" class=\"form-control\" id=\"apellido2ID\" value=\"{$apellido2_form}\" placeholder=\"". sprintf(Idioma::lit('introduce_tu'), 'Segundo Apellido') ."\">
                                 </div>
 
                                 <div class=\"mb-4 {$_error_fecha_nacimiento}\">
-                                    <label for=\"fecha_nacimientoID\" class=\"form-label\">Fecha nacimiento</label>
+                                    <label for=\"fecha_nacimientoID\" class=\"form-label\">". Idioma::lit('fecha_nacimiento') ."</label>
                                     <input {$disabled} type=\"date\" name=\"fecha_nacimiento\" class=\"form-control\" id=\"fecha_nacimientoID\" value=\"{$fecha_nacimiento_form}\">
                                 </div>
 
                                 <div class=\"mb-4 {$_error_email}\">
-                                    <label for=\"emailID\" class=\"form-label\">Email</label>
-                                    <input {$disabled} type=\"email\" name=\"email\" class=\"form-control\" id=\"emailID\" value=\"{$email_form}\" placeholder=\"nombre@dominio.com\">
+                                    <label for=\"emailID\" class=\"form-label\">". Idioma::lit('email') ."</label>
+                                    <input {$disabled} type=\"email\" name=\"email\" class=\"form-control\" id=\"emailID\" value=\"{$email_form}\" placeholder=\"". Idioma::lit('email_generico') ."\">
                                 </div>
 
                                 {$boton_editar}
@@ -408,18 +408,18 @@ switch ($seccion) {
         echo '
             <main class="page-section">
                 <div class="container pt-5">
-                    <h1 class="text-center text-uppercase mb-4">Listado de usuarios</h1>
-                    <a href="' . $base . '/usuarios/alta" class="btn btn-primary mb-4">Alta de Usuario</a>
+                    <h1 class="text-center text-uppercase mb-4">'. Idioma::lit('usuarios') .'</h1>
+                    <a href="' . $base . '/usuarios/alta" class="btn btn-primary mb-4">' . Idioma::lit('alta_usuario') . '</a>
                     <div class="table-responsive">
                         <table class="table table-striped table-hover align-middle">
                             <thead class="table-dark">
                                 <tr>
                                     <th scope="col">ID</th>
-                                    <th scope="col">Nombre</th>
-                                    <th scope="col">Apellido 1</th>
-                                    <th scope="col">Apellido 2</th>
-                                    <th scope="col">Fecha de nacimiento</th>
-                                    <th scope="col">E-mail</th>
+                                    <th scope="col">'. Idioma::lit('nombre') .'</th>
+                                    <th scope="col">'. Idioma::lit('apellido1') .'</th>
+                                    <th scope="col">'. Idioma::lit('apellido2') .'</th>
+                                    <th scope="col">'. Idioma::lit('fecha_nacimiento') .'</th>
+                                    <th scope="col">'. Idioma::lit('email') .'</th>
                                     <th scope="col">Acciones</th>
                                 </tr>
                             </thead>
@@ -472,7 +472,7 @@ switch ($seccion) {
         if ($pagina > 0) {
             $paginaAnterior = $pagina - 1;
             echo '<li class="page-item"><a class="page-link" href="' . $base . '/usuarios/listado/'
-                . $paginaAnterior . '">Anterior</a></li>';
+                . $paginaAnterior . '">' . Idioma::lit('anterior') . '</a></li>';
         }
 
         for ($numeroPagina = 0; $numeroPagina < $totalPaginas; $numeroPagina++) {
@@ -489,7 +489,7 @@ switch ($seccion) {
         if ($pagina < $totalPaginas - 1) {
             $paginaSiguiente = $pagina + 1;
             echo '<li class="page-item"><a class="page-link" href="' . $base . '/usuarios/listado/'
-                . $paginaSiguiente . '">Siguiente</a></li>';
+                . $paginaSiguiente . '">' . Idioma::lit('siguiente') . '</a></li>';
         }
 
         echo '

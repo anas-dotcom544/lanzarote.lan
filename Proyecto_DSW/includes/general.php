@@ -10,7 +10,7 @@ spl_autoload_register(function ($class_name) {
 
     if ($class_name == 'BBDD' || $class_name == 'Query')
         $subdirectorio = 'bbdd/';
-    elseif ($class_name == 'Template')
+    elseif ($class_name == 'Template' || $class_name == 'Idioma')
         $subdirectorio = '';
 
     require_once __DIR__ . "/{$subdirectorio}class." . strtolower($class_name) . '.php';
