@@ -112,7 +112,7 @@ class Modelo
             UPDATE {$this->tabla}
 
             SET {$updates}
-                ,fecha_modi         = now()
+                fecha_modi         = now()
                 ,ip_modi            = '". $_SERVER['SERVER_ADDR']    ."'
 
             WHERE id = '{$id}'
